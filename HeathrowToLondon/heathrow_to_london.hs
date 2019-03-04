@@ -200,11 +200,11 @@ runProg input =
         -- pathString = concatMap (show . fst) path  
         -- pathPrice = sum $ map snd path
     in 
-        show (optimalPath roadSystem, sum $ map snd path)
+        show (path, sum $ map snd path)
 
 -- main execution of program
 main :: IO()
 main =
     -- groupsOf(3 [50, 10, 30, 5, 90, 20, 40, 2, 25, 10, 8])
     print("Finding optimal path: " ++ runProg [50, 10, 30, 5, 90, 20, 40, 2, 25, 10, 8, 0])
-    -- print("Calling qpList [1, 2, 3]: \n" ++ show (qpList [50, 10, 30, 5, 90, 20, 40, 2, 25, 10, 8]))g
+    -- print("Calling qpList [1, 2, 3]: \n" ++ show (qpList [50, 10, 30, 5, 90, 20, 40, 2, 25, 10, 8]))
