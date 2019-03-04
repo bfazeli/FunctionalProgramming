@@ -1,4 +1,4 @@
-from pyrsistent import m, pmap, v, pvector
+# from pyrsistent import m, pmap, v, pvector
 from toolz import interleave, accumulate, last, concat, take, drop
 from operator import add
 from collections import namedtuple
@@ -11,14 +11,19 @@ class Step:
     distance: int
 
 
-def runProg(input: [int]) -> ([int], [int]):
-    threes = groupsOf(3, input)
-    bestPaths = last(optimalPath(threes))
-
-    return bestPaths[0] if sum(map(lambda step: step.distance, bestPaths[0])) <= sum(map(lambda step: step.distance, bestPaths[1])) else bestPaths[1]
+step = Step("A", 4)  # Must be str or bytes
 
 
-def optimalPath(threes: [[int]]) -> ([Step], [Step]):
+def runProg(input: [int]) -> ([int], [int]) =
+    bestPaths = input |> groupsOf(3, ?) |> optimalPath |> last
+
+    if (bestPaths[0] |> map$(step -> step.distance) |> sum) <= (bestPaths[1] |> map$(step -> step.distance) |> sum):
+        return bestPaths[0]
+    else
+        return bestPaths[1]
+
+
+def optimalPath(threes: [[int]]) -> ([Step], [Step]) =
     forwardPriceToA = threes[0][0]
     crossPriceToA = threes[0][1] + threes[0][2]
     forwardPriceToB = threes[0][1]
@@ -28,16 +33,16 @@ def optimalPath(threes: [[int]]) -> ([Step], [Step]):
         Step("B", forwardPriceToB), Step("C", threes[0][2])]
     newPathToB = [Step("B", forwardPriceToB)] if forwardPriceToB <= crossPriceToB else [
         Step("A", forwardPriceToA), Step("C", threes[0][2])]
-    accumulator = (pvector(newPathToA), pvector(newPathToB))
+    accumulator = (newPathToA, newPathToB)
 
-    newThrees = drop(1, threes)
+    newThrees = threes |> drop(1, ?)
     return accumulate(roadStep, newThrees, accumulator)
 
 
-def roadStep(tuple: ([Step], [Step]), section: [int]) -> ([Step], [Step]):
+def roadStep(tuple: ([Step], [Step]), section: [int]) -> ([Step], [Step]) =
 
-    priceA = sum(map(lambda step: step.distance, tuple[0]))
-    priceB = sum(map(lambda step: step.distance, tuple[1]))
+    priceA = tuple[0] |> map$(step -> step.distance) |> sum
+    priceB = tuple[1] |> map$(step -> step.distance) |> sum
 
     forwardPriceToA = priceA + section[0]
     crossPriceToA = priceB + section[1] + section[2]
@@ -52,8 +57,8 @@ def roadStep(tuple: ([Step], [Step]), section: [int]) -> ([Step], [Step]):
     return (newPathToA, newPathToB)
 
 
-def groupsOf(num: int, input: [int]) -> [int]:
-    return pvector([input[i:i+3] for i in range(0, len(input), 3)])
+def groupsOf(num: int, input: [int]) -> [int] =
+    return [input[i:i+3] for i in range(0, len(input), 3)]
 
 
-print(runProg([50, 10, 30, 5, 90, 20, 40, 2, 25, 10, 8, 0]))
+[50, 10, 30, 5, 90, 20, 40, 2, 25, 10, 8, 0] |> runProg |> print
